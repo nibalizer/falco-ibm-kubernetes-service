@@ -58,6 +58,7 @@ Terminal 1: See the output
 {"output":"04:44:14.629652552: Notice A shell was spawned in a container with an attached terminal (user=root k8s.pod=falco-d7ml2 container=fb91c1e33a1d shell=bash parent=<NA> cmdline=bash  terminal=34816) k8s.pod=falco-d7ml2 container=fb91c1e33a1d","priority":"Notice","rule":"Terminal shell in container","time":"2018-09-25T04:44:14.629652552Z", "output_fields": {"container.id":"fb91c1e33a1d","evt.time":1537850654629652552,"k8s.pod.name":"falco-d7ml2","proc.cmdline":"bash ","proc.name":"bash","proc.pname":null,"proc.tty":34816,"user.name":"root"}}
 ```
 
+> Note that you can see lots of context including container id and pod name
 
 
 ## Writing a custom falco rule
