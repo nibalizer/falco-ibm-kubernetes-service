@@ -4,6 +4,8 @@ Falco from Sysdig is an open source software tool that watches the Linux kernel 
 
 Today, we'll install Falco onto an IBM Kubernetes Service cluster, build out some custom rules, then attach it to a pipeline with IBM Event Streams and IBM Functions to take action when a flagged event occurs.
 
+This is a remix of the [falco-nats](https://github.com/sysdiglabs/falco-nats) example but uses IBM Event Streams in place of NATS and IBM Cloud Functions in place of kubeless.
+
 
 ## Installing Falco on the IBM Kubernetes Service
 
