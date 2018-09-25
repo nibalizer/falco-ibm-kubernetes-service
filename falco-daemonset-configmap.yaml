@@ -15,12 +15,6 @@ spec:
     spec:
       serviceAccount: falco-account
       containers:
-        - name: falco-nats
-          image: sysdiglabs/falco-nats:latest
-          imagePullPolicy: Always
-          volumeMounts:
-            - mountPath: /var/run/falco/
-              name: shared-pipe
         - name: falco
           image: sysdig/falco:latest
           securityContext:
