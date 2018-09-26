@@ -68,8 +68,61 @@ TODO
 
 
 ## 
+#
+
+## Provision IBM Event Streams and connect to falco events
+
+TODO: create IES instance
+
+### Get IES credentials
+
+```bash
+$ ibmcloud service list | grep falco
+nibz-message-hub-falco-2                             messagehub                                    standard                                                                                                                                                                                                                                                                                                        create succeeded
+$ ibmcloud service key-show  nibz-message-hub-falco-2 'Service credentials-1'
+Invoking 'cf service-key nibz-message-hub-falco-2 Service credentials-1'...
+
+Getting key Service credentials-1 for service instance nibz-message-hub-falco-2 as skrum@us.ibm.com...
+
+{
+ "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+ "instance_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+ "kafka_admin_url": "https://kafka-admin-prod02.messagehub.services.us-south.bluemix.net:443",
+ "kafka_brokers_sasl": [
+  "kafka05-prod02.messagehub.services.us-south.bluemix.net:9093",
+  "kafka04-prod02.messagehub.services.us-south.bluemix.net:9093",
+  "kafka01-prod02.messagehub.services.us-south.bluemix.net:9093",
+  "kafka02-prod02.messagehub.services.us-south.bluemix.net:9093",
+  "kafka03-prod02.messagehub.services.us-south.bluemix.net:9093"
+ ],
+ "kafka_rest_url": "https://kafka-rest-prod02.messagehub.services.us-south.bluemix.net:443",
+ "mqlight_lookup_url": "https://mqlight-lookup-prod02.messagehub.services.us-south.bluemix.net/Lookup?serviceId=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+ "password": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+ "user": "xxxxxxxxxxxxxxxx"
+}
+```
 
 
+### Create Kubernetes secret from IES credentials
+
+```bash
+ibmcloud service key-show  nibz-message-hub-falco-2 'Service credentials-1' | grep -v '\.\.\.' | jq '.' 
+```
+
+> Validate the downloaded credentials file looks correct.
+
+```bash
+ibmcloud service key-show  nibz-message-hub-falco-2 'Service credentials-1' | grep -v '\.\.\.' | jq '.' > kafka-credentials.json 
+
+kubectl create secret generic eventstreams-binding  --from-file=binding=./kafka-credentials.json     
+secret/eventstreams-binding created
+```
+
+> Validate that the secret looks correct on the Kubernetes side
+
+```bash
+kubectl get secret eventstreams-binding -o yaml | grep binding: | cut -d " " -f 4 | base64 -d | jq '.
+```
 
 
 
