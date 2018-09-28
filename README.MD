@@ -127,6 +127,105 @@ kubectl get secret eventstreams-binding -o yaml | grep binding: | cut -d " " -f 
 
 
 
+### Setup authentication for openwhisk to kubernetes
+#
+```bash
+ ibmcloud iam access-group-create falco-pod-deleter
+Creating access group falco-pod-deleter under account IBM as skrum@us.ibm.com...
+OK
+
+                  
+Name:          falco-pod-deleter   
+ID:            AccessGroupId-937ee16b-5277-4143-9937-fc03ce19020c   
+Description:  
+```
+
+service id
+- add policy
+- add api key
+
+
+ibmcloud iam service-id-create falco-pod-deleter -d "Delete pods on falco events (nibz)"
+Creating service ID falco-pod-deleter bound to current account as skrum@us.ibm.com...
+OK
+Service ID falco-pod-deleter is created successfully
+                 
+Name          falco-pod-deleter   
+Description   Delete pods on falco events (nibz)   
+CRN           crn:v1:bluemix:public:iam-identity::a/47b84451ab70b94737518f7640a9ee42::serviceid:ServiceId-0be7029f-a565-43c0-8a9a-2b8a41c352b8   
+Bound To      crn:v1:bluemix:public:::a/47b84451ab70b94737518f7640a9ee42:::   
+Version       1-41cd49c8b632191b5e9642c2b541bae9   
+Locked        false   
+UUID          ServiceId-0be7029f-a565-43c0-8a9a-2b8a41c352b8   
+
+
+$ ibmcloud ks cluster-get nibz-istio-1.0-test-deleteme
+Retrieving cluster nibz-istio-1.0-test-deleteme...
+OK
+
+                           
+Name:                   nibz-istio-1.0-test-deleteme   
+ID:                     9587cb6ec8684f52ba58bf785bbc9b7e   
+State:                  normal   
+Created:                2018-07-31T21:35:26+0000   
+Location:               dal10   
+Master URL:             https://169.47.70.10:31962   
+Master Location:        Dallas   
+Master Status:          Ready (2 weeks ago)   
+Ingress Subdomain:      -   
+Ingress Secret:         -   
+Workers:                3   
+Worker Zones:           dal10   
+Version:                1.10.7_1520   
+Owner Email:            skrum@us.ibm.com   
+Monitoring Dashboard:   -   
+
+
+
+$ ibmcloud iam service-policy-create falco-pod-deleter  --roles 'Administrator' --service-name containers-kubernetes --service-instance 9587cb6ec8684f52ba58bf785bbc9b7e --region 'us-south' 
+Creating policy under current account for service ID falco-pod-deleter as skrum@us.ibm.com...
+OK
+Service policy is successfully created
+
+                
+Policy ID:   bfeb7768-4d9d-4749-ab9a-f32295c70c5c   
+Version:     1-2e9de9f34d2a9fe5a58e9c39901fad64   
+Roles:       Administrator   
+Resources:                            
+             Service Name       containers-kubernetes      
+             Service Instance   9587cb6ec8684f52ba58bf785bbc9b7e      
+             Region             us-south      
+             Resource Type            
+             Resource                 
+
+
+$  ibmcloud iam service-api-key-create falco-pod-deleter falco-pod-deleter -d "API Key for OpenWhisk to delete pods" --file apikey 
+Creating API key falco-pod-deleter of service falco-pod-deleter as skrum@us.ibm.com...
+OK
+Service API key falco-pod-deleter is created
+Successfully save API key information to apikey
+
+$ cat apikey 
+{
+        "name": "falco-pod-deleter",
+        "description": "API Key for OpenWhisk to delete pods",
+        "apikey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "createdAt": "2018-09-27T01:40+0000",
+        "locked": false,
+        "uuid": ""
+}
+
+
+$ ibmcloud logout
+Logging out...
+OK
+
+
+```
+                
+
+
+
 
 
 
